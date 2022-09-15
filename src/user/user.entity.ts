@@ -1,4 +1,5 @@
 import { Field, ID, ObjectType } from "@nestjs/graphql";
+import { hashPasswordTransform } from "src/helpers/crypto";
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @ObjectType() // tipagem graphql
@@ -17,7 +18,9 @@ export class User{
     @Column()
     email: string
 
-    @Column()
+    @Column({
+        transformer: hashPasswordTransform
+    })
     password: string
 
     @CreateDateColumn()

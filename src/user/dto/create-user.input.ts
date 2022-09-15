@@ -1,14 +1,19 @@
-import { InputType, ObjectType } from "@nestjs/graphql"
+import { InputType } from "@nestjs/graphql"
 import { IsEmail, IsNotEmpty, IsString, Matches, MaxLength, MinLength } from "class-validator"
 
 @InputType()
 export class CreateUserInput {
     @IsString()
     @IsNotEmpty({ message: 'name can not be empty' })
+    @MinLength(3)
+    @MaxLength(50)
     name: string
 
     @IsString()
     @IsNotEmpty({ message: 'cpf can not be empty' })
+    @Matches(/^\d{3}.\d{3}.\d{3}-\d{2}$/, {
+        message: 'cpf field should be a valid cpf',
+    })
     cpf: string
 
     @IsEmail()

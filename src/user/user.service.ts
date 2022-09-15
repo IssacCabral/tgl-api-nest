@@ -18,7 +18,10 @@ export class UserService {
         if(!userCreated){
             throw new InternalServerErrorException('user not created')
         }
-        return userCreated
+        return {
+            ...userCreated,
+            password: undefined
+        }
     }
 
     async findAllUsers(): Promise<User[]>{
