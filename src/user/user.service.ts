@@ -26,6 +26,11 @@ export class UserService {
 
     async findAllUsers(): Promise<User[]>{
         const users = await this.userRepository.find()
-        return users
+
+        const formatedUsers = users.map(user => {
+            return {...user, password: undefined}
+        })
+
+        return formatedUsers
     }
 }
