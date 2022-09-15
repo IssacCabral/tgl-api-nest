@@ -16,7 +16,7 @@ import { UserModule } from './user/user.module';
       username: 'root',
       password: 'root',
       database: 'tgl_api_nest',
-      entities: ['dist/**/*.entity{.ts,.js}'],
+      entities: ["dist/**/*.entity{.ts,.js}"],
       synchronize: true
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
