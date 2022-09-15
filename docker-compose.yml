@@ -1,0 +1,36 @@
+version: "3"
+
+networks:
+  luby_projects:
+    external: true
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: ./Docker/api/Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+    networks:
+      - luby_projects
+    depends_on:
+      - mysql
+
+  mysql:
+    build:
+      context: ./Docker/db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: tgl_api_nest
+    ports:
+      - "3306:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      - luby_projects
+
+
+volumes:
+  db-data:
