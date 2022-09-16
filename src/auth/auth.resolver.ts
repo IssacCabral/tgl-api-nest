@@ -11,12 +11,7 @@ export class AuthResolver {
 
     @Mutation(() => AuthType)
     async login(@Args('data') data: AuthInput): Promise<AuthType>{
-        const response = await this.authService.validateUser(data)
-
-        return {
-            user: response.user,
-            token: response.token
-        }
+        return await this.authService.validateUser(data)
     }   
 
 
