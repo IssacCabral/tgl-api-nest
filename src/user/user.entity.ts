@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType } from "@nestjs/graphql";
+import { Field, HideField, ID, ObjectType } from "@nestjs/graphql";
 import { hashPasswordTransform } from "src/helpers/crypto";
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
@@ -21,6 +21,7 @@ export class User{
     @Column({
         transformer: hashPasswordTransform
     })
+    @HideField() // propriedade do graphQl para esconder o campo
     password: string
 
     @CreateDateColumn()

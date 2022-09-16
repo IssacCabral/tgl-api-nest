@@ -18,19 +18,11 @@ export class UserService {
         if(!userCreated){
             throw new InternalServerErrorException('user not created')
         }
-        return {
-            ...userCreated,
-            password: undefined
-        }
+        return userCreated
     }
 
     async findAllUsers(): Promise<User[]>{
         const users = await this.userRepository.find()
-
-        const formatedUsers = users.map(user => {
-            return {...user, password: undefined}
-        })
-
-        return formatedUsers
+        return users
     }
 }
