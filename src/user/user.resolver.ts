@@ -1,4 +1,6 @@
+import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { GqlAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CreateUserInput } from './dto/create-user.input';
 import { User } from './user.entity';
 import { UserService } from './user.service';
@@ -21,6 +23,7 @@ export class UserResolver {
         return users
     }
 
+    @UseGuards(GqlAuthGuard)
     @Query(() => User)
     async userByEmail(@Args('email') email: string): Promise<User>{
        return await this.userService.getUserByEmail(email)
