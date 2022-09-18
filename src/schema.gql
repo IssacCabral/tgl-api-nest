@@ -36,6 +36,7 @@ type Game {
 type Query {
   users: [User!]!
   userByEmail(email: String!): User!
+  games: [Game!]!
   game(id: Int!): Game!
 }
 

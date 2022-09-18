@@ -13,8 +13,8 @@ export class GameResolver {
     return this.gameService.create(createGameInput);
   }
 
-  @Query(() => [Game], { name: 'game' })
-  findAll() {
+  @Query(() => [Game])
+  async games(): Promise<Game[]> {
     return this.gameService.findAll();
   }
 

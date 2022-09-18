@@ -21,8 +21,8 @@ export class GameService {
     return gameCreated
   }
 
-  findAll() {
-    return `This action returns all game`;
+  async findAll(): Promise<Game[]> {
+    return await this.gameRepository.find()
   }
 
   findOne(id: number) {
