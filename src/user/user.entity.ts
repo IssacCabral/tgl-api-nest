@@ -1,6 +1,7 @@
 import { Field, HideField, ID, ObjectType } from "@nestjs/graphql";
 import { hashPasswordTransform } from "src/helpers/crypto";
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Role } from "src/role/entities/role.entity";
+import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @ObjectType() // tipagem graphql
 @Entity()
@@ -23,6 +24,10 @@ export class User{
     })
     @HideField() // propriedade do graphQl para esconder o campo
     password: string
+
+    @ManyToMany(() => Role)
+    @JoinTable()
+    roles: Role[]
 
     @CreateDateColumn()
     created_at: Date

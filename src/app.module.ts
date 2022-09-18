@@ -30,7 +30,7 @@ import { GameModule } from './game/game.module';
     }),
     UserModule,
     AuthModule,
-    GameModule,
+    GameModule
   ],
   controllers: [AppController],
   providers: [AppService],
