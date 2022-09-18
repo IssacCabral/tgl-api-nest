@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { GameService } from './game.service';
 import { Game } from './entities/game.entity';
 import { CreateGameInput } from './dto/create-game.input';
@@ -31,8 +31,8 @@ export class GameResolver {
     return await this.gameService.update(id, updateGameInput);
   }
 
-  @Mutation(() => Game)
-  removeGame(@Args('id') id: string) {
-    return this.gameService.remove(id);
+  @Mutation(() => Boolean)
+  async removeGame(@Args('id') id: string): Promise<boolean> {
+    return await this.gameService.remove(id);
   }
 }

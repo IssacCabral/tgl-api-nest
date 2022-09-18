@@ -45,7 +45,7 @@ type Mutation {
   login(data: AuthInput!): AuthType!
   createGame(createGameInput: CreateGameInput!): Game!
   updateGame(id: String!, updateGameInput: UpdateGameInput!): Game!
-  removeGame(id: String!): Game!
+  removeGame(id: String!): Boolean!
 }
 
 input CreateUserInput {

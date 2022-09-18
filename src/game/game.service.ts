@@ -46,8 +46,8 @@ export class GameService {
   async remove(id: string): Promise<boolean> {
     const game = await this.findOne(id)
 
-    const deleted = await this.gameRepository.delete(game)
+    const hasDeleted = await this.gameRepository.delete(game.id)
 
-    return deleted ? true : false
+    return hasDeleted ? true : false
   }
 }
