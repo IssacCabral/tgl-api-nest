@@ -3,6 +3,8 @@ import { GameService } from './game.service';
 import { Game } from './entities/game.entity';
 import { CreateGameInput } from './dto/create-game.input';
 import { UpdateGameInput } from './dto/update-game.input';
+import { HttpStatus, NotFoundException, Res } from '@nestjs/common';
+import { Response, response } from 'express';
 
 @Resolver(() => Game)
 export class GameResolver {
@@ -19,8 +21,8 @@ export class GameResolver {
   }
 
   @Query(() => Game, { name: 'gameById' })
-  findOne(@Args('id') id: string): Promise<Game> {
-    return this.gameService.findOne(id);
+  async findOne(@Args('id') id: string){
+    return await this.gameService.findOne(id);
   }
 
   @Mutation(() => Game)
