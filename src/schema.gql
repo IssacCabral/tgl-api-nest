@@ -37,15 +37,15 @@ type Query {
   users: [User!]!
   userByEmail(email: String!): User!
   games: [Game!]!
-  game(id: Int!): Game!
+  gameById(id: String!): Game!
 }
 
 type Mutation {
   createUser(data: CreateUserInput!): User!
   login(data: AuthInput!): AuthType!
   createGame(createGameInput: CreateGameInput!): Game!
-  updateGame(updateGameInput: UpdateGameInput!): Game!
-  removeGame(id: Int!): Game!
+  updateGame(id: String!, updateGameInput: UpdateGameInput!): Game!
+  removeGame(id: String!): Game!
 }
 
 input CreateUserInput {
@@ -76,5 +76,4 @@ input UpdateGameInput {
   price: Float
   minAndMaxNumber: Float
   color: String
-  id: Int!
 }

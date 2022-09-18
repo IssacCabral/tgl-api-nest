@@ -18,18 +18,21 @@ export class GameResolver {
     return this.gameService.findAll();
   }
 
-  @Query(() => Game, { name: 'game' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
+  @Query(() => Game, { name: 'gameById' })
+  findOne(@Args('id') id: string): Promise<Game> {
     return this.gameService.findOne(id);
   }
 
   @Mutation(() => Game)
-  updateGame(@Args('updateGameInput') updateGameInput: UpdateGameInput) {
-    return this.gameService.update(updateGameInput.id, updateGameInput);
+  async updateGame(
+    @Args('id') id: string,
+    @Args('updateGameInput') updateGameInput: UpdateGameInput
+  ): Promise<Game> {
+    return await this.gameService.update(id, updateGameInput);
   }
 
   @Mutation(() => Game)
-  removeGame(@Args('id', { type: () => Int }) id: number) {
+  removeGame(@Args('id') id: string) {
     return this.gameService.remove(id);
   }
 }

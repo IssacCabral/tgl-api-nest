@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateGameInput } from './dto/create-game.input';
@@ -25,15 +25,29 @@ export class GameService {
     return await this.gameRepository.find()
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} game`;
+  async findOne(id: string): Promise<Game> {
+    const game = await this.gameRepository.findOne({where: {id: id}})
+
+    if(!game) throw new NotFoundException('game not found')
+
+    return game
   }
 
-  update(id: number, updateGameInput: UpdateGameInput) {
-    return `This action updates a #${id} game`;
+  async update(id: string, updateGameInput: UpdateGameInput): Promise<Game>{
+    const game = await this.findOne(id)
+
+    await this.gameRepository.update({id}, {...updateGameInput})
+
+    const gameUpdated = this.gameRepository.create({...game, ...updateGameInput})
+
+    return gameUpdated
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} game`;
+  async remove(id: string): Promise<boolean> {
+    const game = await this.findOne(id)
+
+    const deleted = await this.gameRepository.delete(game)
+
+    return deleted ? true : false
   }
 }
