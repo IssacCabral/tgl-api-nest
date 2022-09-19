@@ -69,12 +69,11 @@ export class UserService {
         const user = await this.userRepository.findOne({where: {email}, relations: {roles: true}})
 
         if(!user) throw new NotFoundException('user not found')
-
         return user
     }
 
     async getUserById(id: string): Promise<User>{
-        const user = await this.userRepository.findOne({where: {id}})
+        const user = await this.userRepository.findOne({where: {id}, relations: {roles: true}})
         if(!user) throw new NotFoundException('user not found')
         return user
     }
@@ -100,9 +99,10 @@ export class UserService {
         }
     }
 
-    async update(id: string, data: UpdateUserInput): Promise<User>{
+    async update(id: string, data: UpdateUserInput, authenticatedUser?: User): Promise<User>{
         // validate entrypoints
         const user = await this.getUserById(id)
+        if(authenticatedUser.id !== id) throw new ForbiddenException('you do not have permissions to update other user')
         await this.checkIfExistsDuplicateUniqueField(id, data)
         // ---------------------- //
 

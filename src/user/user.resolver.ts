@@ -1,4 +1,4 @@
-import { ForbiddenException, UseGuards } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { GqlAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { Roles } from 'src/role/decorator/roles.decorator';
@@ -9,7 +9,6 @@ import { UpdateUserInput } from './dto/update-user.input';
 import { CurrentUser } from './decorator/user.decorator';
 import { User } from './user.entity';
 import { UserService } from './user.service';
-import { ForbiddenError } from 'apollo-server-express';
 
 @Resolver()
 export class UserResolver {
@@ -52,9 +51,10 @@ export class UserResolver {
     @Mutation(() => User)
     async updateUser(
         @Args('id') id: string,
-        @Args('updateUserInput') updateUserInput: UpdateUserInput
+        @Args('updateUserInput') updateUserInput: UpdateUserInput,
+        @CurrentUser() authenticatedUser: User
     ): Promise<User> {
-        return await this.userService.update(id, updateUserInput);
+        return await this.userService.update(id, updateUserInput, authenticatedUser);
     }
 
     @Mutation(() => Boolean)
