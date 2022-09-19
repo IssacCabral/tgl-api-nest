@@ -6,6 +6,7 @@ import { RoleEnum } from 'src/role/enums/role.enum';
 import { RolesGuard } from 'src/role/guards/roles.guard';
 import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
+import { CurrentUser } from './user.decorator';
 import { User } from './user.entity';
 import { UserService } from './user.service';
 
@@ -30,7 +31,11 @@ export class UserResolver {
     @UseGuards(GqlAuthGuard, RolesGuard)
     @Roles(RoleEnum.Player)
     @Query(() => User)
-    async userByEmail(@Args('email') email: string): Promise<User> {
+    async userByEmail(
+        @Args('email') email: string,
+        @CurrentUser() authenticatedUser: User
+    ): Promise<User> {
+        console.log(authenticatedUser)
         return await this.userService.getUserByEmail(email)
     }
 

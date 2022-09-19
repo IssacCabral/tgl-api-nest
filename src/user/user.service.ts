@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException, Req } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Role } from 'src/role/entities/role.entity';
 import { Repository } from 'typeorm';
@@ -6,6 +6,7 @@ import { CreateUserInput } from './dto/create-user.input';
 import { User } from './user.entity';
 import { checkIfUserAlreadyExists } from 'src/helpers/checkIfUserAlreadyExists';
 import { UpdateUserInput } from './dto/update-user.input';
+import { Request } from 'express';
 
 @Injectable()
 export class UserService {
