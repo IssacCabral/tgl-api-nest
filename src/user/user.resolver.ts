@@ -22,6 +22,14 @@ export class UserResolver {
         return user
     }
 
+    @Mutation(() => User)
+    async createAdminUser(@Args('data') data: CreateUserInput): Promise<User> {
+        const user = await this.userService.createAdminUser(data)
+        return user
+    }
+
+    @UseGuards(GqlAuthGuard, RolesGuard)
+    @Roles(RoleEnum.Admin)
     @Query(() => [User])
     async users(): Promise<User[]> {
         const users = await this.userService.findAllUsers()

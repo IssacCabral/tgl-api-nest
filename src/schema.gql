@@ -51,6 +51,7 @@ type Query {
 
 type Mutation {
   createUser(data: CreateUserInput!): User!
+  createAdminUser(data: CreateUserInput!): User!
   updateUser(id: String!, updateUserInput: UpdateUserInput!): User!
   removeUser(id: String!): Boolean!
   login(data: AuthInput!): AuthType!

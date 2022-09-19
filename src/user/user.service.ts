@@ -38,6 +38,27 @@ export class UserService {
         return userCreated
     }
 
+    async createAdminUser(data: CreateUserInput): Promise<User>{
+        const errors = await checkIfUserAlreadyExists({email: data.email, cpf: data.cpf, repository: this.userRepository})
+
+        if(errors.length > 0) throw new BadRequestException(errors)
+
+        const user = this.userRepository.create(data)
+        const adminRole = await this.roleRepository.findOne({where: {name: 'admin'}})
+
+        user.roles = [adminRole]
+
+        const createUser = await this.userRepository.save(user)
+
+        if(!createUser){
+            throw new InternalServerErrorException('user not created')
+        }
+
+        const userCreated = await this.userRepository.findOne({where: {id: createUser.id}, relations: {roles: true}})
+        
+        return userCreated
+    }
+
     async findAllUsers(): Promise<User[]>{
         const users = await this.userRepository.find({relations: {roles: true}})
         return users
