@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException, Req } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, InternalServerErrorException, NotFoundException, Req } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Role } from 'src/role/entities/role.entity';
 import { Repository } from 'typeorm';
@@ -7,6 +7,7 @@ import { User } from './user.entity';
 import { checkIfUserAlreadyExists } from 'src/helpers/checkIfUserAlreadyExists';
 import { UpdateUserInput } from './dto/update-user.input';
 import { Request } from 'express';
+import { ForbiddenError } from 'apollo-server-express';
 
 @Injectable()
 export class UserService {
@@ -72,9 +73,19 @@ export class UserService {
         return user
     }
 
-    private async getUserById(id: string): Promise<User>{
+    async getUserById(id: string): Promise<User>{
         const user = await this.userRepository.findOne({where: {id}})
         if(!user) throw new NotFoundException('user not found')
+        return user
+    }
+
+    async findUser(email: string, userAuthenticad: User): Promise<User>{
+        if(userAuthenticad.email !== email) throw new ForbiddenException('you do not have permissions to show other user')
+
+        const user = await this.userRepository.findOne({where: {email}, relations: {roles: true}})
+
+        if(!user) throw new NotFoundException('user not found')
+
         return user
     }
 

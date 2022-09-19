@@ -1,4 +1,4 @@
-import { UseGuards } from '@nestjs/common';
+import { ForbiddenException, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { GqlAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { Roles } from 'src/role/decorator/roles.decorator';
@@ -6,9 +6,10 @@ import { RoleEnum } from 'src/role/enums/role.enum';
 import { RolesGuard } from 'src/role/guards/roles.guard';
 import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
-import { CurrentUser } from './user.decorator';
+import { CurrentUser } from './decorator/user.decorator';
 import { User } from './user.entity';
 import { UserService } from './user.service';
+import { ForbiddenError } from 'apollo-server-express';
 
 @Resolver()
 export class UserResolver {
@@ -32,6 +33,7 @@ export class UserResolver {
     @Roles(RoleEnum.Admin)
     @Query(() => [User])
     async users(): Promise<User[]> {
+        console.log('to aqui no users')
         const users = await this.userService.findAllUsers()
         return users
     }
@@ -39,14 +41,14 @@ export class UserResolver {
     @UseGuards(GqlAuthGuard, RolesGuard)
     @Roles(RoleEnum.Player)
     @Query(() => User)
-    async userByEmail(
+    async findUser(
         @Args('email') email: string,
         @CurrentUser() authenticatedUser: User
     ): Promise<User> {
-        console.log(authenticatedUser)
-        return await this.userService.getUserByEmail(email)
+        return await this.userService.findUser(email, authenticatedUser)
     }
 
+    @UseGuards(GqlAuthGuard)
     @Mutation(() => User)
     async updateUser(
         @Args('id') id: string,

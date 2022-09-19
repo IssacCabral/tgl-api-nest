@@ -44,7 +44,7 @@ type Game {
 
 type Query {
   users: [User!]!
-  userByEmail(email: String!): User!
+  findUser(email: String!): User!
   games: [Game!]!
   gameById(id: String!): Game!
 }
