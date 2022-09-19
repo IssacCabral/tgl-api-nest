@@ -5,6 +5,7 @@ import { CreateGameInput } from './dto/create-game.input';
 import { UpdateGameInput } from './dto/update-game.input';
 import { HttpStatus, NotFoundException, Res } from '@nestjs/common';
 import { Response, response } from 'express';
+import { FetchGamesArgs } from './dto/fetch-games.input';
 
 @Resolver(() => Game)
 export class GameResolver {
@@ -16,8 +17,9 @@ export class GameResolver {
   }
 
   @Query(() => [Game])
-  async games(): Promise<Game[]> {
-    return this.gameService.findAll();
+
+  async games(@Args() args: FetchGamesArgs): Promise<Game[]> {
+    return this.gameService.findAll(args);
   }
 
   @Query(() => Game, { name: 'gameById' })

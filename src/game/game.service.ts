@@ -5,6 +5,7 @@ import { CreateGameInput } from './dto/create-game.input';
 import { UpdateGameInput } from './dto/update-game.input';
 import { Game } from './entities/game.entity';
 import { checkIfGameAlreadyExists } from 'src/helpers/checkIfGameAlreadyExists';
+import { FetchGamesArgs } from './dto/fetch-games.input';
 
 @Injectable()
 export class GameService {
@@ -25,8 +26,14 @@ export class GameService {
     return gameCreated
   }
 
-  async findAll(): Promise<Game[]> {
-    return await this.gameRepository.find()
+  async findAll(args: FetchGamesArgs): Promise<Game[]> {
+    
+    return await this.gameRepository.find({
+      take: args.take || 2,
+      skip: (args.skip - 1) * (args.take)|| 0
+    })
+
+    //return await this.gameRepository.find()
   }
 
   async findOne(id: string): Promise<Game> {
