@@ -4,15 +4,19 @@ import { Repository } from 'typeorm';
 import { CreateGameInput } from './dto/create-game.input';
 import { UpdateGameInput } from './dto/update-game.input';
 import { Game } from './entities/game.entity';
+import { checkIfGameAlreadyExists } from 'src/helpers/checkIfGameAlreadyExists';
 
 @Injectable()
 export class GameService {
   constructor(
     @InjectRepository(Game)
-    private gameRepository: Repository<Game>
+    public gameRepository: Repository<Game>
   ){}
 
   async create(createGameInput: CreateGameInput): Promise<Game> {
+    const errors = await checkIfGameAlreadyExists({type: createGameInput.type, repository: this.gameRepository})
+    if(errors.length > 0) throw new BadRequestException(errors)
+
     const game = this.gameRepository.create(createGameInput)
     const gameCreated = await this.gameRepository.save(game)
 

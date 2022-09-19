@@ -1,20 +1,25 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Role } from 'src/role/entities/role.entity';
 import { Repository } from 'typeorm';
 import { CreateUserInput } from './dto/create-user.input';
 import { User } from './user.entity';
+import { checkIfUserAlreadyExists } from 'src/helpers/checkIfUserAlreadyExists';
 
 @Injectable()
 export class UserService {
     constructor(
         @InjectRepository(User)
-        private userRepository: Repository<User>,
+        public userRepository: Repository<User>,
         @InjectRepository(Role)
         private roleRepository: Repository<Role>
     ){}
 
     async createUser(data: CreateUserInput): Promise<User>{
+        const errors = await checkIfUserAlreadyExists({email: data.email, cpf: data.cpf, repository: this.userRepository})
+
+        if(errors.length > 0) throw new BadRequestException(errors)
+
         const user = this.userRepository.create(data)
         const playerRole = await this.roleRepository.findOne({where: {name: 'player'}})
 
