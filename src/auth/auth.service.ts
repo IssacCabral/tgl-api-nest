@@ -18,8 +18,9 @@ export class AuthService {
 
     async validateUser(data: AuthInput): Promise<AuthType>{
         const user = await this.userRepository.findOne({where: {email: data.email}, relations: {roles: true}})
+        if(!user) throw new UnauthorizedException('invalid credentials')
+        
         const isValidPassword = compareSync(data.password, user.password)
-
         if(!isValidPassword) throw new UnauthorizedException('invalid credentials')
 
         const token = await this.jwtToken(user)

@@ -9,6 +9,8 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { GameModule } from './game/game.module';
+import { APP_GUARD } from '@nestjs/core';
+import { RolesGuard } from './role/guards/roles.guard';
 
 @Module({
   imports: [
@@ -33,6 +35,9 @@ import { GameModule } from './game/game.module';
     GameModule
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    RolesGuard
+  ],
 })
 export class AppModule { }

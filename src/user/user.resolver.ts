@@ -1,6 +1,9 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { GqlAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { Roles } from 'src/role/decorator/roles.decorator';
+import { RoleEnum } from 'src/role/enums/role.enum';
+import { RolesGuard } from 'src/role/guards/roles.guard';
 import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
 import { User } from './user.entity';
@@ -24,7 +27,8 @@ export class UserResolver {
         return users
     }
 
-    @UseGuards(GqlAuthGuard)
+    @UseGuards(GqlAuthGuard, RolesGuard)
+    @Roles(RoleEnum.Player)
     @Query(() => User)
     async userByEmail(@Args('email') email: string): Promise<User> {
         return await this.userService.getUserByEmail(email)
