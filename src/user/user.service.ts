@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { CreateUserInput } from './dto/create-user.input';
 import { User } from './user.entity';
 import { checkIfUserAlreadyExists } from 'src/helpers/checkIfUserAlreadyExists';
+import { UpdateUserInput } from './dto/update-user.input';
 
 @Injectable()
 export class UserService {
@@ -37,7 +38,7 @@ export class UserService {
     }
 
     async findAllUsers(): Promise<User[]>{
-        const users = await this.userRepository.find()
+        const users = await this.userRepository.find({relations: {roles: true}})
         return users
     }
 
@@ -47,5 +48,42 @@ export class UserService {
         if(!user) throw new NotFoundException('user not found')
 
         return user
+    }
+
+    private async getUserById(id: string): Promise<User>{
+        const user = await this.userRepository.findOne({where: {id}})
+        if(!user) throw new NotFoundException('user not found')
+        return user
+    }
+
+    private async checkIfExistsDuplicateUniqueField(id: string, data: UpdateUserInput){
+        if(Object.keys(data).includes('cpf')){
+            const user = await this.userRepository.findOneBy({cpf: data.cpf})
+            if((user) && (user.id != id)) throw new BadRequestException('the cpf must be unique')
+        }
+        if(Object.keys(data).includes('email')){
+            const user = await this.userRepository.findOneBy({email: data.email})
+            if((user) && (user.id != id)) throw new BadRequestException('the email must be unique')
+        }
+    }
+
+    async update(id: string, data: UpdateUserInput): Promise<User>{
+        // validate entrypoints
+        const user = await this.getUserById(id)
+        await this.checkIfExistsDuplicateUniqueField(id, data)
+        // ---------------------- //
+
+        await this.userRepository.update({id}, {...data})
+
+        const updatedUser = this.userRepository.create({...user, ...data})
+
+        return updatedUser
+    }
+
+    async remove(id: string): Promise<boolean>{
+        const user = await this.getUserById(id)
+        const hasDeleted = await this.userRepository.delete(user.id)
+
+        return hasDeleted ? true : false
     }
 }

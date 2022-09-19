@@ -51,6 +51,8 @@ type Query {
 
 type Mutation {
   createUser(data: CreateUserInput!): User!
+  updateUser(id: String!, updateUserInput: UpdateUserInput!): User!
+  removeUser(id: String!): Boolean!
   login(data: AuthInput!): AuthType!
   createGame(createGameInput: CreateGameInput!): Game!
   updateGame(id: String!, updateGameInput: UpdateGameInput!): Game!
@@ -62,6 +64,13 @@ input CreateUserInput {
   cpf: String!
   email: String!
   password: String!
+}
+
+input UpdateUserInput {
+  name: String
+  cpf: String
+  email: String
+  password: String
 }
 
 input AuthInput {
