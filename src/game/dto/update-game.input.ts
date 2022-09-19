@@ -1,6 +1,6 @@
 import { CreateGameInput } from './create-game.input';
 import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
-import { IsNotEmpty, IsNumber, IsOptional, IsString, Matches, MaxLength, Min, MinLength } from 'class-validator';
+import { IsDecimal, IsNotEmpty, IsNumber, IsOptional, IsString, Matches, MaxLength, Min, MinLength } from 'class-validator';
 
 @InputType()
 export class UpdateGameInput extends PartialType(CreateGameInput) {

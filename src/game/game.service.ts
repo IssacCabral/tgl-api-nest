@@ -37,8 +37,18 @@ export class GameService {
     return game
   }
 
+  private async checkIfExistsDuplicateUniqueField(id: string, data: UpdateGameInput){
+    if(Object.keys(data).includes('type')){
+        const game = await this.gameRepository.findOneBy({type: data.type})
+        if((game) && (game.id != id)) throw new BadRequestException('the type field must be unique')
+    }
+}
+
   async update(id: string, updateGameInput: UpdateGameInput): Promise<Game>{
+    // validate entrypoints
     const game = await this.findOne(id)
+    await this.checkIfExistsDuplicateUniqueField(id, updateGameInput)
+    // ---------------------- //
 
     await this.gameRepository.update({id}, {...updateGameInput})
 
