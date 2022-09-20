@@ -1,5 +1,7 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, Type } from '@nestjs/common';
+import { Field, ObjectType } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ValidateNested } from 'class-validator';
 import { Game } from 'src/game/entities/game.entity';
 import { User } from 'src/user/user.entity';
 import { Repository } from 'typeorm';
@@ -47,7 +49,7 @@ export class BetService {
     const errors = await this.validateBetsInput(createBetInput)
     if(errors.length > 0) throw new BadRequestException(errors)
 
-
+    
 
     return authenticatedUser
   }

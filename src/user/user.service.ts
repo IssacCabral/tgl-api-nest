@@ -138,4 +138,8 @@ export class UserService {
         const createdCart = await this.cartRepository.save(cart)
         return createdCart
     }
+
+    async getMinCartValue(): Promise<Cart[]>{
+        return await this.cartRepository.find()
+    }
 }

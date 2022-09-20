@@ -77,4 +77,11 @@ export class UserResolver {
     ): Promise<Cart> {
         return await this.userService.setMinCartValue(data)
     }
+
+    @UseGuards(GqlAuthGuard, RolesGuard)
+    @Roles(RoleEnum.Admin)
+    @Query(() => [Cart])
+    async getMinCartValue(): Promise<Cart[]> {
+        return await this.userService.getMinCartValue()
+    }
 }

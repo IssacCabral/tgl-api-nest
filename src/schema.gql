@@ -63,6 +63,7 @@ type AuthType {
 type Query {
   users(skip: Int = 0, take: Int = 25): [User!]!
   findUser(email: String!): User!
+  getMinCartValue: [Cart!]!
   games(skip: Int = 0, take: Int = 25): [Game!]!
   gameById(id: String!): Game!
   bet(id: Int!): Bet!
@@ -129,8 +130,8 @@ input CreateBetInput {
 }
 
 input BetInput {
-  gameId: String!
   numbers: [Float!]!
+  gameId: String!
 }
 
 input UpdateBetInput {
