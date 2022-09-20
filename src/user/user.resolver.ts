@@ -10,6 +10,8 @@ import { CurrentUser } from './decorator/user.decorator';
 import { User } from './user.entity';
 import { UserService } from './user.service';
 import { FetchUsersArgs } from './dto/fetch-users.input';
+import { Cart } from 'src/cart/entities/cart.entity';
+import { SetMinCartValue } from 'src/cart/dto/set-min-value.input';
 
 @Resolver()
 export class UserResolver {
@@ -65,5 +67,14 @@ export class UserResolver {
         @CurrentUser() authenticatedUser: User
     ): Promise<boolean> {
         return await this.userService.remove(id, authenticatedUser);
+    }
+
+    @UseGuards(GqlAuthGuard, RolesGuard)
+    @Roles(RoleEnum.Admin)
+    @Mutation(() => Cart)
+    async setMinCartValue(
+        @Args('data') data: SetMinCartValue
+    ): Promise<Cart> {
+        return await this.userService.setMinCartValue(data)
     }
 }

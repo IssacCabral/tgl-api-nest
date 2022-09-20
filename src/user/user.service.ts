@@ -6,9 +6,9 @@ import { CreateUserInput } from './dto/create-user.input';
 import { User } from './user.entity';
 import { checkIfUserAlreadyExists } from 'src/helpers/checkIfUserAlreadyExists';
 import { UpdateUserInput } from './dto/update-user.input';
-import { Request } from 'express';
-import { ForbiddenError } from 'apollo-server-express';
 import { FetchUsersArgs } from './dto/fetch-users.input';
+import { Cart } from 'src/cart/entities/cart.entity';
+import { SetMinCartValue } from 'src/cart/dto/set-min-value.input';
 
 @Injectable()
 export class UserService {
@@ -16,7 +16,9 @@ export class UserService {
         @InjectRepository(User)
         public userRepository: Repository<User>,
         @InjectRepository(Role)
-        private roleRepository: Repository<Role>
+        private roleRepository: Repository<Role>,
+        @InjectRepository(Cart)
+        private cartRepository: Repository<Cart>
     ){}
 
     async createUser(data: CreateUserInput): Promise<User>{
@@ -126,5 +128,14 @@ export class UserService {
         const hasDeleted = await this.userRepository.delete(user.id)
 
         return hasDeleted ? true : false
+    }
+
+    async setMinCartValue(data: SetMinCartValue){
+        await this.cartRepository.clear()
+
+        const cart = this.cartRepository.create(data)
+
+        const createdCart = await this.cartRepository.save(cart)
+        return createdCart
     }
 }

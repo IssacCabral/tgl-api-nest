@@ -48,6 +48,13 @@ type User {
   updated_at: DateTime!
 }
 
+type Cart {
+  id: ID!
+  minCartValue: Float!
+  created_at: DateTime!
+  updated_at: DateTime!
+}
+
 type AuthType {
   user: User!
   token: String!
@@ -66,6 +73,7 @@ type Mutation {
   createAdminUser(data: CreateUserInput!): User!
   updateUser(id: String!, updateUserInput: UpdateUserInput!): User!
   removeUser(id: String!): Boolean!
+  setMinCartValue(data: SetMinCartValue!): Cart!
   login(data: AuthInput!): AuthType!
   createGame(createGameInput: CreateGameInput!): Game!
   updateGame(id: String!, updateGameInput: UpdateGameInput!): Game!
@@ -87,6 +95,10 @@ input UpdateUserInput {
   cpf: String
   email: String
   password: String
+}
+
+input SetMinCartValue {
+  minCartValue: Float!
 }
 
 input AuthInput {
