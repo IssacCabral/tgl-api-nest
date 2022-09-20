@@ -8,6 +8,7 @@ import { checkIfUserAlreadyExists } from 'src/helpers/checkIfUserAlreadyExists';
 import { UpdateUserInput } from './dto/update-user.input';
 import { Request } from 'express';
 import { ForbiddenError } from 'apollo-server-express';
+import { FetchUsersArgs } from './dto/fetch-users.input';
 
 @Injectable()
 export class UserService {
@@ -60,8 +61,13 @@ export class UserService {
         return userCreated
     }
 
-    async findAllUsers(): Promise<User[]>{
-        const users = await this.userRepository.find({relations: {roles: true}})
+    async findAllUsers(args: FetchUsersArgs): Promise<User[]>{
+        const users = await this.userRepository.find({
+            take: args.take || 4,
+            skip: (args.skip - 1) * (args.take)|| 0,
+            relations: {roles: true}
+        })
+        
         return users
     }
 

@@ -9,6 +9,7 @@ import { UpdateUserInput } from './dto/update-user.input';
 import { CurrentUser } from './decorator/user.decorator';
 import { User } from './user.entity';
 import { UserService } from './user.service';
+import { FetchUsersArgs } from './dto/fetch-users.input';
 
 @Resolver()
 export class UserResolver {
@@ -31,8 +32,8 @@ export class UserResolver {
     @UseGuards(GqlAuthGuard, RolesGuard)
     @Roles(RoleEnum.Admin)
     @Query(() => [User])
-    async users(): Promise<User[]> {
-        const users = await this.userService.findAllUsers()
+    async users(@Args() args: FetchUsersArgs): Promise<User[]> {
+        const users = await this.userService.findAllUsers(args)
         return users
     }
 
