@@ -32,7 +32,6 @@ export class UserResolver {
     @Roles(RoleEnum.Admin)
     @Query(() => [User])
     async users(): Promise<User[]> {
-        console.log('to aqui no users')
         const users = await this.userService.findAllUsers()
         return users
     }
@@ -57,8 +56,13 @@ export class UserResolver {
         return await this.userService.update(id, updateUserInput, authenticatedUser);
     }
 
+    @UseGuards(GqlAuthGuard, RolesGuard)
+    @Roles(RoleEnum.Player)
     @Mutation(() => Boolean)
-    async removeUser(@Args('id') id: string): Promise<boolean> {
-        return await this.userService.remove(id);
+    async removeUser(
+        @Args('id') id: string,
+        @CurrentUser() authenticatedUser: User
+    ): Promise<boolean> {
+        return await this.userService.remove(id, authenticatedUser);
     }
 }

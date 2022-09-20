@@ -113,7 +113,9 @@ export class UserService {
         return updatedUser
     }
 
-    async remove(id: string): Promise<boolean>{
+    async remove(id: string, authenticatedUser?: User): Promise<boolean>{
+        if(authenticatedUser.id !== id) throw new ForbiddenException('you just have permissions to delete your account')
+
         const user = await this.getUserById(id)
         const hasDeleted = await this.userRepository.delete(user.id)
 
