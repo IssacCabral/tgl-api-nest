@@ -4,10 +4,11 @@ import { BetResolver } from './bet.resolver';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Bet } from './entities/bet.entity';
 import { Game } from 'src/game/entities/game.entity';
+import { Cart } from 'src/cart/entities/cart.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Bet, Game])
+    TypeOrmModule.forFeature([Bet, Game, Cart])
   ],
   providers: [BetResolver, BetService]
 })
