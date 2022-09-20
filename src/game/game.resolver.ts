@@ -21,8 +21,6 @@ export class GameResolver {
     return this.gameService.create(createGameInput);
   }
 
-  @UseGuards(GqlAuthGuard, RolesGuard)
-  @Roles(RoleEnum.Admin)
   @Query(() => [Game])
   async games(@Args() args: FetchGamesArgs): Promise<Game[]> {
     return this.gameService.findAll(args);

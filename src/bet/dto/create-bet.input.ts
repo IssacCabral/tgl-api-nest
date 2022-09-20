@@ -1,7 +1,19 @@
-import { InputType, Int, Field } from '@nestjs/graphql';
+import { InputType, ObjectType } from '@nestjs/graphql';
+import { IsArray, IsString } from 'class-validator';
+
+@InputType()
+class BetInput{
+  @IsString()
+  gameId: string
+
+  @IsArray()
+  numbers: number[]
+}
 
 @InputType()
 export class CreateBetInput {
-  @Field(() => Int, { description: 'Example field (placeholder)' })
-  exampleField: number;
+
+  @IsArray()
+  bets: BetInput[]
 }
+

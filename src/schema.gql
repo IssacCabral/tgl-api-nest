@@ -78,7 +78,7 @@ type Mutation {
   createGame(createGameInput: CreateGameInput!): Game!
   updateGame(id: String!, updateGameInput: UpdateGameInput!): Game!
   removeGame(id: String!): Boolean!
-  createBet(createBetInput: CreateBetInput!): Bet!
+  createBets(createBetInput: CreateBetInput!): User!
   updateBet(updateBetInput: UpdateBetInput!): Bet!
   removeBet(id: Int!): Bet!
 }
@@ -125,12 +125,15 @@ input UpdateGameInput {
 }
 
 input CreateBetInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  bets: [BetInput!]!
+}
+
+input BetInput {
+  gameId: String!
+  numbers: [Float!]!
 }
 
 input UpdateBetInput {
-  """Example field (placeholder)"""
-  exampleField: Int
+  bets: [BetInput!]
   id: Int!
 }
