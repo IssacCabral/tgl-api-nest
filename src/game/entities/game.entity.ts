@@ -1,5 +1,6 @@
-import { ObjectType, Field, Int, ID } from '@nestjs/graphql';
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { ObjectType, Field, ID } from '@nestjs/graphql';
+import { Bet } from 'src/bet/entities/bet.entity';
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 @ObjectType()
 @Entity()
@@ -17,7 +18,7 @@ export class Game {
   @Column()
   range: number
 
-  @Column({type: 'float', width: 8})
+  @Column({ type: 'float', width: 8 })
   price: number
 
   @Column()
@@ -25,6 +26,9 @@ export class Game {
 
   @Column()
   color: string
+
+  @OneToMany(() => Bet, (bet) => bet.game)
+  bets: Bet[]
 
   @CreateDateColumn()
   created_at: Date

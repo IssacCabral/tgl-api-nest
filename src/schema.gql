@@ -15,12 +15,35 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type Game {
+  id: ID!
+  type: String!
+  description: String!
+  range: Float!
+  price: Float!
+  minAndMaxNumber: Float!
+  color: String!
+  bets: [Bet!]!
+  created_at: DateTime!
+  updated_at: DateTime!
+}
+
+type Bet {
+  id: ID!
+  user: User!
+  game: Game!
+  numbers: String!
+  created_at: DateTime!
+  updated_at: DateTime!
+}
+
 type User {
   id: ID!
   name: String!
   cpf: String!
   email: String!
   roles: [Role!]!
+  bets: [Bet!]!
   created_at: DateTime!
   updated_at: DateTime!
 }
@@ -30,23 +53,12 @@ type AuthType {
   token: String!
 }
 
-type Game {
-  id: ID!
-  type: String!
-  description: String!
-  range: Float!
-  price: Float!
-  minAndMaxNumber: Float!
-  color: String!
-  created_at: DateTime!
-  updated_at: DateTime!
-}
-
 type Query {
   users(skip: Int = 0, take: Int = 25): [User!]!
   findUser(email: String!): User!
   games(skip: Int = 0, take: Int = 25): [Game!]!
   gameById(id: String!): Game!
+  bet(id: Int!): Bet!
 }
 
 type Mutation {
@@ -58,6 +70,9 @@ type Mutation {
   createGame(createGameInput: CreateGameInput!): Game!
   updateGame(id: String!, updateGameInput: UpdateGameInput!): Game!
   removeGame(id: String!): Boolean!
+  createBet(createBetInput: CreateBetInput!): Bet!
+  updateBet(updateBetInput: UpdateBetInput!): Bet!
+  removeBet(id: Int!): Bet!
 }
 
 input CreateUserInput {
@@ -95,4 +110,15 @@ input UpdateGameInput {
   price: Float
   minAndMaxNumber: Float
   color: String
+}
+
+input CreateBetInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateBetInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
 }
