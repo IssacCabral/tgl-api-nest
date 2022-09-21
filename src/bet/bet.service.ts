@@ -10,6 +10,9 @@ import { Bet } from './entities/bet.entity';
 import convertToRealCurrency from 'src/helpers/convert-to-real-currency';
 import { FormatDate } from 'src/helpers/formatDate';
 
+import { UserBetsObj } from './dto/user-bet-obj';
+import {CreatedBetsReturn } from './dto/created-bets-return';
+
 @Injectable()
 export class BetService {
   constructor(
@@ -71,7 +74,7 @@ export class BetService {
       throw new BadRequestException(`current cart value: ${sumValueOfBetsToReal}. the value of the bets must be at least ${minCartValueToReal}`)
     }
 
-    return minCartValue
+    return {minCartValue, sumValueOfBets}
   }
 
   private async handleCreateBets({bets}: CreateBetInput, authenticatedUser: User){
@@ -96,11 +99,11 @@ export class BetService {
     return betsCreatedAt
   }
 
-  async create(createBetInput: CreateBetInput, authenticatedUser: User): Promise<User> {
+  async create(createBetInput: CreateBetInput, authenticatedUser: User): Promise<CreatedBetsReturn> {
     const errors = await this.validateBetsInput(createBetInput)
     if(errors.length > 0) throw new BadRequestException(errors)
 
-    await this.checkSumValueOfBets(createBetInput)
+    const {sumValueOfBets} = await this.checkSumValueOfBets(createBetInput)
     const betsCreatedAt = await this.handleCreateBets(createBetInput, authenticatedUser)
 
     const {year, month, day, hour_minute_second} = FormatDate(betsCreatedAt.toString().split(' '))
@@ -116,12 +119,42 @@ export class BetService {
       }
     })
 
-    return user
+    const createdBetsReturn: CreatedBetsReturn = {
+      user: authenticatedUser,
+      betsPrice: convertToRealCurrency.format(sumValueOfBets),
+      lastBets: []
+    }
+
+    user.bets.forEach(userBet => {
+      createdBetsReturn.lastBets.push(userBet)
+    })
+
+    return createdBetsReturn
   }
 
-  async findAllUserBets(authenticatedUser: User) {
-    const user = await this.userRepository.findOne({where: {id: authenticatedUser.id}})
-    return await this.betRepository.find({relations: {user: true}, where: {user}})
+  async findAllUserBets(authenticatedUser: User): Promise<UserBetsObj> {
+    const {id} = await this.userRepository.findOne({where: {id: authenticatedUser.id}})
+
+    const userBets = await this.betRepository.find({
+      relations: {
+        user: true,
+        game: true
+      },
+      where: {
+        user: {id}
+      }
+    })
+
+    const userBetsObj: UserBetsObj = {
+      user: authenticatedUser,
+      bets: []
+    }
+
+    userBets.forEach(userBet => {
+      userBetsObj.bets.push(userBet)
+    })
+
+    return userBetsObj
   }
 
   findOne(id: number) {

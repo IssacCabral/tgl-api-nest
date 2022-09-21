@@ -60,13 +60,24 @@ type AuthType {
   token: String!
 }
 
+type UserBetsObj {
+  user: User!
+  bets: [Bet!]!
+}
+
+type CreatedBetsReturn {
+  user: User!
+  betsPrice: String!
+  lastBets: [Bet!]!
+}
+
 type Query {
   users(skip: Int = 0, take: Int = 25): [User!]!
   findUser(email: String!): User!
   getMinCartValue: [Cart!]!
   games(skip: Int = 0, take: Int = 25): [Game!]!
   gameById(id: String!): Game!
-  findAllUserBets: [Bet!]!
+  findAllUserBets: UserBetsObj!
   findOne(id: Int!): Bet!
 }
 
@@ -80,7 +91,7 @@ type Mutation {
   createGame(createGameInput: CreateGameInput!): Game!
   updateGame(id: String!, updateGameInput: UpdateGameInput!): Game!
   removeGame(id: String!): Boolean!
-  createBets(createBetInput: CreateBetInput!): User!
+  createBets(createBetInput: CreateBetInput!): CreatedBetsReturn!
   updateBet(updateBetInput: UpdateBetInput!): Bet!
   removeBet(id: Int!): Bet!
 }

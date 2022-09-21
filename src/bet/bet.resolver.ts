@@ -11,24 +11,27 @@ import { RoleEnum } from 'src/role/enums/role.enum';
 import { CurrentUser } from 'src/user/decorator/user.decorator';
 import { User } from 'src/user/user.entity';
 
+import { UserBetsObj } from './dto/user-bet-obj';
+import { CreatedBetsReturn } from './dto/created-bets-return';
+
 @Resolver(() => Bet)
 export class BetResolver {
   constructor(private readonly betService: BetService) {}
 
   @UseGuards(GqlAuthGuard, RolesGuard)
   @Roles(RoleEnum.Player)
-  @Mutation(() => User)
+  @Mutation(() => CreatedBetsReturn)
   async createBets(
     @Args('createBetInput') createBetInput: CreateBetInput,
     @CurrentUser() authenticatedUser: User
-  ): Promise<User> {
+  ): Promise<CreatedBetsReturn> {
     return await this.betService.create(createBetInput, authenticatedUser);
   }
 
   @UseGuards(GqlAuthGuard, RolesGuard)
   @Roles(RoleEnum.Player)
-  @Query(() => [Bet])
-  findAllUserBets(@CurrentUser() authenticatedUser: User) {
+  @Query(() => UserBetsObj)
+  findAllUserBets(@CurrentUser() authenticatedUser: User): Promise<UserBetsObj> {
     return this.betService.findAllUserBets(authenticatedUser);
   }
 
