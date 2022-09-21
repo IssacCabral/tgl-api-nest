@@ -1,11 +1,10 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cart } from 'src/cart/entities/cart.entity';
 import { Game } from 'src/game/entities/game.entity';
 import { User } from 'src/user/user.entity';
 import { Raw, Repository } from 'typeorm';
 import { CreateBetInput } from './dto/create-bet.input';
-import { UpdateBetInput } from './dto/update-bet.input';
 import { Bet } from './entities/bet.entity';
 import convertToRealCurrency from 'src/helpers/convert-to-real-currency';
 import { FormatDate } from 'src/helpers/formatDate';
