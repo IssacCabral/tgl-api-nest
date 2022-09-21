@@ -25,12 +25,14 @@ export class BetResolver {
     return await this.betService.create(createBetInput, authenticatedUser);
   }
 
-  @Query(() => [Bet], { name: 'bet' })
-  findAll() {
-    return this.betService.findAll();
+  @UseGuards(GqlAuthGuard, RolesGuard)
+  @Roles(RoleEnum.Player)
+  @Query(() => [Bet])
+  findAllUserBets(@CurrentUser() authenticatedUser: User) {
+    return this.betService.findAllUserBets(authenticatedUser);
   }
 
-  @Query(() => Bet, { name: 'bet' })
+  @Query(() => Bet)
   findOne(@Args('id', { type: () => Int }) id: number) {
     return this.betService.findOne(id);
   }

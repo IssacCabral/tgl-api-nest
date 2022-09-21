@@ -1,13 +1,14 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cart } from 'src/cart/entities/cart.entity';
 import { Game } from 'src/game/entities/game.entity';
 import { User } from 'src/user/user.entity';
-import { Repository } from 'typeorm';
+import { Raw, Repository } from 'typeorm';
 import { CreateBetInput } from './dto/create-bet.input';
 import { UpdateBetInput } from './dto/update-bet.input';
 import { Bet } from './entities/bet.entity';
 import convertToRealCurrency from 'src/helpers/convert-to-real-currency';
+import { FormatDate } from 'src/helpers/formatDate';
 
 @Injectable()
 export class BetService {
@@ -17,7 +18,9 @@ export class BetService {
     @InjectRepository(Game)
     private gameRepository: Repository<Game>,
     @InjectRepository(Cart)
-    private cartRepository: Repository<Cart>
+    private cartRepository: Repository<Cart>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>
   ) {}
 
   private async validateBetsInput({bets}: CreateBetInput){
@@ -71,18 +74,54 @@ export class BetService {
     return minCartValue
   }
 
+  private async handleCreateBets({bets}: CreateBetInput, authenticatedUser: User){
+    let betsCreatedAt
+
+    await Promise.all(
+      bets.map(async bet => {
+        const user = await this.userRepository.findOne({where: {id: authenticatedUser.id}})
+        const game = await this.gameRepository.findOne({where: {id: bet.gameId}})
+        const betToCreate = new Bet()
+
+        betToCreate.user = user
+        betToCreate.game = game
+        betToCreate.numbers = bet.numbers.join(',')
+
+        await this.betRepository.save(betToCreate)
+
+        betsCreatedAt = betToCreate.created_at
+      })
+    )
+
+    return betsCreatedAt
+  }
+
   async create(createBetInput: CreateBetInput, authenticatedUser: User): Promise<User> {
     const errors = await this.validateBetsInput(createBetInput)
     if(errors.length > 0) throw new BadRequestException(errors)
 
-    const minCartValue = await this.checkSumValueOfBets(createBetInput)
+    await this.checkSumValueOfBets(createBetInput)
+    const betsCreatedAt = await this.handleCreateBets(createBetInput, authenticatedUser)
 
+    const {year, month, day, hour_minute_second} = FormatDate(betsCreatedAt.toString().split(' '))
 
-    return authenticatedUser
+    const user = await this.userRepository.findOne({
+      relations: {
+        bets: true
+      },
+      where: {
+        bets: {
+          created_at: Raw((alias) => `${alias} >= :date`, {date: `${year}-${month}-${day} ${hour_minute_second}`})
+        }
+      }
+    })
+
+    return user
   }
 
-  findAll() {
-    return `This action returns all bet`;
+  async findAllUserBets(authenticatedUser: User) {
+    const user = await this.userRepository.findOne({where: {id: authenticatedUser.id}})
+    return await this.betRepository.find({relations: {user: true}, where: {user}})
   }
 
   findOne(id: number) {
