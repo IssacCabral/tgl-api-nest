@@ -78,6 +78,7 @@ type Query {
   games(skip: Int = 0, take: Int = 25): [Game!]!
   gameById(id: String!): Game!
   findAllUserBets: UserBetsObj!
+  findAllBets(skip: Int = 0, take: Int = 25): [Bet!]!
   findOne(id: Int!): Bet!
 }
 
@@ -92,8 +93,6 @@ type Mutation {
   updateGame(id: String!, updateGameInput: UpdateGameInput!): Game!
   removeGame(id: String!): Boolean!
   createBets(createBetInput: CreateBetInput!): CreatedBetsReturn!
-  updateBet(updateBetInput: UpdateBetInput!): Bet!
-  removeBet(id: Int!): Bet!
 }
 
 input CreateUserInput {
@@ -144,9 +143,4 @@ input CreateBetInput {
 input BetInput {
   numbers: [Float!]!
   gameId: String!
-}
-
-input UpdateBetInput {
-  bets: [BetInput!]
-  id: Int!
 }

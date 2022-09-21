@@ -12,6 +12,7 @@ import { FormatDate } from 'src/helpers/formatDate';
 
 import { UserBetsObj } from './dto/user-bet-obj';
 import {CreatedBetsReturn } from './dto/created-bets-return';
+import { FetchBetsInput } from './dto/fetch-bets-input';
 
 @Injectable()
 export class BetService {
@@ -157,15 +158,17 @@ export class BetService {
     return userBetsObj
   }
 
+  async findAllBets(args: FetchBetsInput){
+    return await this.betRepository.find({
+      relations: {user: true, game: true},
+      take: args.take || 4,
+      skip: (args.skip - 1) * (args.take)|| 0,
+    })
+  }
+
   findOne(id: number) {
     return `This action returns a #${id} bet`;
   }
 
-  update(id: number, updateBetInput: UpdateBetInput) {
-    return `This action updates a #${id} bet`;
-  }
 
-  remove(id: number) {
-    return `This action removes a #${id} bet`;
-  }
 }

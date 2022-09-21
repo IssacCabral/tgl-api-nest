@@ -13,6 +13,7 @@ import { User } from 'src/user/user.entity';
 
 import { UserBetsObj } from './dto/user-bet-obj';
 import { CreatedBetsReturn } from './dto/created-bets-return';
+import { FetchBetsInput } from './dto/fetch-bets-input';
 
 @Resolver(() => Bet)
 export class BetResolver {
@@ -31,8 +32,17 @@ export class BetResolver {
   @UseGuards(GqlAuthGuard, RolesGuard)
   @Roles(RoleEnum.Player)
   @Query(() => UserBetsObj)
-  findAllUserBets(@CurrentUser() authenticatedUser: User): Promise<UserBetsObj> {
-    return this.betService.findAllUserBets(authenticatedUser);
+  async findAllUserBets(@CurrentUser() authenticatedUser: User): Promise<UserBetsObj> {
+    return await this.betService.findAllUserBets(authenticatedUser);
+  }
+
+  @UseGuards(GqlAuthGuard, RolesGuard)
+  @Roles(RoleEnum.Admin)
+  @Query(() => [Bet])
+  async findAllBets(
+    @Args() args: FetchBetsInput
+  ){
+    return await this.betService.findAllBets(args)
   }
 
   @Query(() => Bet)
@@ -40,13 +50,5 @@ export class BetResolver {
     return this.betService.findOne(id);
   }
 
-  @Mutation(() => Bet)
-  updateBet(@Args('updateBetInput') updateBetInput: UpdateBetInput) {
-    return this.betService.update(updateBetInput.id, updateBetInput);
-  }
 
-  @Mutation(() => Bet)
-  removeBet(@Args('id', { type: () => Int }) id: number) {
-    return this.betService.remove(id);
-  }
 }
